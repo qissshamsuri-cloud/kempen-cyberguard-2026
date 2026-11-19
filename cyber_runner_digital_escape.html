@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CYBER RUNNER – DIGITAL ESCAPE</title>
+    <!-- Tailwind CSS for modern UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js for 3D graphics rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Orbitron -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050515;
+            color: #ffffff;
+            overflow: hidden;
+            touch-action: none;
+        }
+        .font-cyber {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .neon-glow {
+            text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff, 0 0 30px #00f3ff;
+        }
+        .neon-glow-pink {
+            text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f, 0 0 30px #ff007f;
+        }
+        .neon-box {
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(0, 243, 255, 0.2);
+            border: 1px solid rgba(0, 243, 255, 0.6);
+        }
+        .neon-box-pink {
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4), inset 0 0 15px rgba(255, 0, 127, 0.2);
+            border: 1px solid rgba(255, 0, 127, 0.6);
+        }
+        .neon-box-green {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.75), inset 0 0 20px rgba(16, 185, 129, 0.35);
+            border: 2px solid rgba(52, 211, 153, 0.9);
+            transition: all 0.3s ease;
+        }
+        @keyframes robotFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(3deg); }
+        }
+        .robot-animate {
+            animation: robotFloat 2s ease-in-out infinite;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(5, 5, 21, 0.8);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00f3ff;
+            border-radius: 3px;
+        }
+        .cover-bg {
+            background: linear-gradient(135deg, rgba(10, 10, 46, 0.85) 0%, rgba(5, 5, 21, 0.92) 50%, rgba(45, 0, 60, 0.85) 100%),
+                        url('https://placehold.co/1920x1080/0a0a2e/00f3ff?text=CYBER+RUNNER+DIGITAL+ESCAPE') center/cover no-repeat;
+        }
+    </style>
+</head>
+<body class="relative w-screen h-screen select-none overflow-hidden">
+
+    <!-- 3D Canvas Container -->
+    <div id="canvas-container" class="absolute inset-0 z-0"></div>
+
+    <!-- MAIN MENU SCREEN -->
+    <div id="main-menu" class="absolute inset-0 z-20 flex flex-col items-center justify-between p-6 cover-bg backdrop-blur-sm">
+        <div class="w-full max-w-5xl flex justify-between items-center pt-4">
+            <div class="flex items-center space-x-2 bg-slate-900/60 px-4 py-2 rounded-full border border-cyan-500/30">
+                <div class="w-3 h-3 bg-cyan-400 rounded-full animate-ping"></div>
+                <span class="font-cyber text-xs tracking-widest text-cyan-400">DWIBAHASA // EN & BM v4.0</span>
+            </div>
+            <div class="flex space-x-3">
+                <button id="btn-audio" class="w-11 h-11 rounded-2xl bg-slate-900/80 neon-box flex items-center justify-center text-cyan-400 hover:bg-cyan-500/20 transition cursor-pointer shadow-lg">
+                    <i class="fa-solid fa-volume-high text-base"></i>
+                </button>
+                <button id="btn-instructions-open" class="w-11 h-11 rounded-2xl bg-slate-900/80 neon-box flex items-center justify-center text-cyan-400 hover:bg-cyan-500/20 transition cursor-pointer shadow-lg">
+                    <i class="fa-solid fa-circle-question text-base"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center text-center max-w-2xl my-auto">
+            <div class="inline-flex items-center space-x-2 px-5 py-2 mb-4 rounded-full bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-500/40 text-pink-300 text-xs font-cyber tracking-widest uppercase animate-bounce shadow-[0_0_20px_rgba(255,0,127,0.3)]">
+                <i class="fa-solid fa-shield-halved text-cyan-400"></i>
+                <span>Cybersecurity Runner // Larian Keselamatan Siber</span>
+            </div>
+            <h1 class="font-cyber text-5xl sm:text-7xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-300 to-pink-500 neon-glow mb-3">
+                CYBER RUNNER
+            </h1>
+            <h2 class="font-cyber text-xl sm:text-2xl font-bold tracking-widest text-cyan-300 mb-6 neon-glow">
+                DIGITAL ESCAPE
+            </h2>
+            <p class="text-slate-200 text-xs sm:text-sm mb-8 max-w-xl leading-relaxed font-medium bg-slate-950/50 p-4 rounded-2xl border border-cyan-500/20 backdrop-blur-md">
+                <span class="block text-cyan-200 font-semibold mb-1">Race across neon railway tracks, dodge incoming trains, and defeat Cyber Challenges to rescue your run!</span>
+                <span class="block text-slate-300">Lari merentasi landasan siber neon, elak kereta api laju, dan selesaikan Cabaran Siber untuk menyambung larian anda!</span>
+            </p>
+
+            <div class="w-full max-w-xl mb-5 rounded-2xl border border-cyan-400/40 bg-slate-950/75 p-4 shadow-[0_0_24px_rgba(0,243,255,.18)]">
+                <div class="font-cyber text-[11px] tracking-[.22em] text-cyan-300 mb-3">SELECT YOUR CHALLENGE / PILIH TAHAP CABARAN</div>
+                <div class="grid grid-cols-3 gap-2">
+                    <button type="button" class="difficulty-btn rounded-xl border border-emerald-400/50 bg-emerald-500/15 px-2 py-3 text-xs sm:text-sm font-bold text-emerald-200" data-level="easy">🟢 ROOKIE<br><span class="text-[10px] font-normal">Santai</span></button>
+                    <button type="button" class="difficulty-btn rounded-xl border border-cyan-400 bg-cyan-500/25 px-2 py-3 text-xs sm:text-sm font-bold text-cyan-100 ring-2 ring-cyan-300/50" data-level="normal">⚡ PRO<br><span class="text-[10px] font-normal">Mencabar</span></button>
+                    <button type="button" class="difficulty-btn rounded-xl border border-pink-400/50 bg-pink-500/15 px-2 py-3 text-xs sm:text-sm font-bold text-pink-200" data-level="hard">🔥 LEGEND<br><span class="text-[10px] font-normal">Sangat sukar</span></button>
+                </div>
+                <p id="difficulty-description" class="mt-3 text-[11px] sm:text-xs text-slate-300">PRO: kelajuan meningkat, halangan lebih kerap dan kuiz bonus lebih pantas.</p>
+            </div>
+
+            <button id="btn-start" class="group relative px-10 py-5 bg-gradient-to-r from-cyan-400 via-blue-500 to-pink-500 hover:from-cyan-300 hover:to-pink-400 text-slate-950 font-cyber font-black text-base sm:text-xl tracking-wider rounded-2xl shadow-[0_0_40px_rgba(0,243,255,0.6)] transform hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden">
+                <div class="absolute inset-0 w-1/2 h-full bg-white/40 skew-x-12 -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000"></div>
+                <span class="flex items-center space-x-3">
+                    <i class="fa-solid fa-play text-slate-950"></i>
+                    <span>START RUNNING / MULA BERLARI</span>
+                </span>
+            </button>
+        </div>
+
+        <div class="w-full max-w-5xl flex justify-between items-center pb-2 text-xs text-slate-400 font-cyber">
+            <span>CYBER RESCUE PROTOCOL</span>
+            <span>SFX AUDIO • THREE.JS</span>
+        </div>
+    </div>
+
+    <!-- INSTRUCTIONS MODAL -->
+    <div id="modal-instructions" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden">
+        <div class="w-full max-w-lg bg-slate-900/95 neon-box rounded-3xl p-6 sm:p-8 relative border border-cyan-500/40 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button id="btn-instructions-close" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="font-cyber text-xl sm:text-2xl font-bold text-cyan-400 mb-4 flex items-center space-x-2">
+                <i class="fa-solid fa-gamepad text-pink-500"></i>
+                <span>HOW TO PLAY / ARAHAN</span>
+            </h3>
+            <div class="space-y-3 text-xs sm:text-sm text-slate-300 mb-6">
+                <div class="flex items-start space-x-3 bg-slate-800/60 p-3.5 rounded-2xl border border-slate-700/50">
+                    <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0 font-cyber font-bold">1</div>
+                    <div>
+                        <strong class="text-cyan-300 block mb-0.5">Switch Lanes / Tukar Lorong</strong>
+                        <span class="block text-slate-200">Swipe Left/Right or press A/D & Arrow keys to switch across 3 railway tracks.</span>
+                        <span class="block text-slate-400 mt-0.5">Leret Kiri/Kanan atau tekan kekunci A/D & Anak Panah untuk tukar antara 3 landasan.</span>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3 bg-slate-800/60 p-3.5 rounded-2xl border border-slate-700/50">
+                    <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0 font-cyber font-bold">2</div>
+                    <div>
+                        <strong class="text-cyan-300 block mb-0.5">Jump & Slide / Lompat & Selit</strong>
+                        <span class="block text-slate-200">Swipe Up / Space / W to jump low barriers. Swipe Down / S to slide under high laser gates.</span>
+                        <span class="block text-slate-400 mt-0.5">Leret Atas / Space / W untuk lompat halangan rendah. Leret Bawah / S untuk selit bawah laser.</span>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3 bg-slate-800/60 p-3.5 rounded-2xl border border-slate-700/50">
+                    <div class="w-8 h-8 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center shrink-0 font-cyber font-bold">3</div>
+                    <div>
+                        <strong class="text-pink-300 block mb-0.5">Collision Rescue Quiz / Kuiz Penyelamat</strong>
+                        <span class="block text-slate-200">If you crash, answer a Cybersecurity Challenge correctly to earn +100 pts, a Cyber Shield, and continue running!</span>
+                        <span class="block text-slate-400 mt-0.5">Jika terlanggar halangan, jawab Cabaran Keselamatan Siber dengan betul untuk +100 mata, Perisai Siber, dan sambung berlari!</span>
+                    </div>
+                </div>
+            </div>
+            <button id="btn-instructions-gotit" class="w-full py-3.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-cyber font-bold rounded-xl transition cursor-pointer shadow-lg">
+                GOT IT! / FAHAM, JOM MULA!
+            </button>
+        </div>
+    </div>
+
+    <!-- GAME HUD -->
+    <div id="game-hud" class="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-4 sm:p-6 hidden">
+        <div class="flex justify-between items-start w-full max-w-6xl mx-auto">
+            <div class="flex flex-wrap gap-2 pointer-events-auto">
+                <div class="flex items-center space-x-2.5 bg-slate-900/85 neon-box px-3.5 py-2 rounded-2xl backdrop-blur-sm">
+                    <div class="w-8 h-8 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 shadow-inner">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div>
+                        <div class="text-[9px] uppercase font-cyber text-slate-400">Score / Mata</div>
+                        <div id="hud-score" class="font-cyber font-bold text-base sm:text-lg text-purple-300">0</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2.5 bg-slate-900/85 neon-box px-3.5 py-2 rounded-2xl backdrop-blur-sm">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 shadow-inner">
+                        <i class="fa-solid fa-coins"></i>
+                    </div>
+                    <div>
+                        <div class="text-[9px] uppercase font-cyber text-slate-400">Coins / Syiling</div>
+                        <div id="hud-coins" class="font-cyber font-bold text-base sm:text-lg text-amber-300">0</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2.5 bg-slate-900/85 neon-box px-3.5 py-2 rounded-2xl backdrop-blur-sm">
+                    <div class="w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 shadow-inner">
+                        <i class="fa-solid fa-route"></i>
+                    </div>
+                    <div>
+                        <div class="text-[9px] uppercase font-cyber text-slate-400">Distance / Jarak</div>
+                        <div id="hud-distance" class="font-cyber font-bold text-base sm:text-lg text-cyan-300">0 m</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 pointer-events-auto">
+                <div id="hud-shield-badge" class="hidden items-center space-x-1.5 bg-cyan-500/25 border border-cyan-400 text-cyan-200 px-3 py-2 rounded-2xl text-xs font-cyber shadow-[0_0_15px_rgba(0,243,255,0.4)] animate-pulse">
+                    <i class="fa-solid fa-shield-halved text-cyan-300"></i>
+                    <span class="hidden sm:inline">SHIELD / PERISAI</span>
+                </div>
+                <div id="hud-immunity-badge" class="hidden items-center space-x-1.5 bg-emerald-500/25 border border-emerald-400 text-emerald-200 px-3 py-2 rounded-2xl text-xs font-cyber shadow-[0_0_15px_rgba(16,185,129,0.4)]">
+                    <i class="fa-solid fa-bolt text-emerald-300"></i>
+                    <span id="hud-immunity-timer">3.0s</span>
+                </div>
+                <button id="btn-pause" class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-slate-900/85 neon-box flex items-center justify-center text-cyan-400 hover:bg-cyan-500/20 transition cursor-pointer shadow-lg">
+                    <i class="fa-solid fa-pause text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-end w-full max-w-6xl mx-auto pb-2 pointer-events-auto opacity-80 sm:opacity-40 hover:opacity-100 transition">
+            <div class="flex space-x-2">
+                <button id="touch-left" class="w-14 h-14 rounded-2xl bg-slate-900/85 border border-cyan-500/40 text-cyan-400 flex items-center justify-center text-xl active:bg-cyan-500/30 shadow-lg">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button id="touch-right" class="w-14 h-14 rounded-2xl bg-slate-900/85 border border-cyan-500/40 text-cyan-400 flex items-center justify-center text-xl active:bg-cyan-500/30 shadow-lg">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="flex space-x-2">
+                <button id="touch-slide" class="w-14 h-14 rounded-2xl bg-slate-900/85 border border-pink-500/40 text-pink-400 flex items-center justify-center text-xl active:bg-pink-500/30 shadow-lg">
+                    <i class="fa-solid fa-arrow-down"></i>
+                </button>
+                <button id="touch-jump" class="w-14 h-14 rounded-2xl bg-slate-900/85 border border-cyan-500/40 text-cyan-400 flex items-center justify-center text-xl active:bg-cyan-500/30 shadow-lg">
+                    <i class="fa-solid fa-arrow-up"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAUSE MENU MODAL -->
+    <div id="modal-pause" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden">
+        <div class="w-full max-w-md bg-slate-900/95 neon-box rounded-3xl p-8 text-center border border-cyan-500/40 shadow-2xl">
+            <h3 class="font-cyber text-2xl sm:text-3xl font-black text-cyan-400 mb-6 neon-glow">PAUSED / DIHENTIKAN</h3>
+            <div class="space-y-3 mb-4">
+                <button id="btn-resume" class="w-full py-4 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-cyber font-bold text-base sm:text-lg rounded-2xl transition cursor-pointer shadow-lg">
+                    RESUME / SAMBUNG LARI
+                </button>
+                <button id="btn-restart-paused" class="w-full py-4 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-cyber font-bold text-base sm:text-lg rounded-2xl border border-cyan-500/30 transition cursor-pointer">
+                    RESTART / MULA SEMULA
+                </button>
+                <button id="btn-quit-paused" class="w-full py-4 bg-slate-800/50 hover:bg-slate-800 text-slate-400 font-cyber font-bold text-base sm:text-lg rounded-2xl transition cursor-pointer">
+                    MAIN MENU / MENU UTAMA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CYBERSECURITY RESCUE QUIZ MODAL -->
+    <div id="modal-quiz" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-lg hidden">
+        <div id="quiz-card" class="w-full max-w-2xl bg-slate-900/95 neon-box-pink rounded-3xl p-5 sm:p-7 relative border border-pink-500/50 shadow-[0_0_50px_rgba(255,0,127,0.35)] max-h-[92vh] overflow-y-auto">
+            <div class="flex items-start sm:items-center space-x-3.5 sm:space-x-4 mb-4">
+                <div id="quiz-robot-avatar" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-pink-500 via-purple-600 to-cyan-500 flex items-center justify-center text-white text-2xl sm:text-3xl neon-box-pink shrink-0 robot-animate shadow-lg">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="flex-1">
+                    <div id="quiz-badge-label" class="text-[10px] sm:text-xs font-cyber text-pink-400 tracking-widest uppercase mb-1">
+                        AI GUARDIAN BOT // ROBOT PENGAWAL SIBER
+                    </div>
+                    <p id="quiz-robot-speech" class="text-xs sm:text-sm text-slate-200 leading-snug font-medium bg-slate-950/60 p-2.5 rounded-xl border border-pink-500/20">
+                        "OH NO! You have crashed into an obstacle! Before you can continue your adventure, you must complete a Cybersecurity Challenge! / ALAMAK! Anda telah melanggar halangan! Sebelum menyambung pengembaraan, anda mesti menyelesaikan Cabaran Keselamatan Siber!"
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/90 p-3.5 sm:p-4 rounded-2xl border border-cyan-500/30 mb-4">
+                <p id="quiz-question-en" class="text-sm sm:text-base font-bold text-white leading-snug mb-1">
+                    Loading question...
+                </p>
+                <p id="quiz-question-bm" class="text-xs sm:text-sm font-medium text-cyan-300 leading-snug">
+                    Memuatkan soalan...
+                </p>
+            </div>
+
+            <div id="quiz-options" class="grid grid-cols-1 gap-2.5 mb-4"></div>
+
+            <div id="quiz-feedback" class="hidden p-3.5 rounded-2xl mb-4 text-xs sm:text-sm"></div>
+
+            <div class="flex flex-col sm:flex-row gap-2.5">
+                <button id="quiz-continue-btn" class="flex-1 py-3.5 px-4 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-cyber font-black text-xs sm:text-sm tracking-wider rounded-xl transition cursor-pointer hidden shadow-[0_0_25px_rgba(16,185,129,0.5)]">
+                    <i class="fa-solid fa-person-running mr-1.5"></i> CONTINUE RUNNING / TERUSKAN LARIAN
+                </button>
+                <button id="quiz-retry-btn" class="flex-1 py-3.5 px-4 bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-400 hover:to-pink-500 text-white font-cyber font-bold text-xs sm:text-sm tracking-wider rounded-xl transition cursor-pointer hidden shadow-lg">
+                    <i class="fa-solid fa-rotate mr-1.5"></i> TRY ANOTHER QUESTION / CUBA SOALAN LAIN
+                </button>
+                <button id="quiz-giveup-btn" class="py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white font-cyber font-bold text-xs rounded-xl border border-slate-700 transition cursor-pointer hidden">
+                    END RUN / TAMAT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="modal-gameover" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-lg hidden">
+        <div class="w-full max-w-md bg-slate-900/95 neon-box-pink rounded-3xl p-8 text-center border border-pink-500/50 shadow-2xl">
+            <div class="inline-block px-4 py-1 mb-3 rounded-full bg-pink-500/20 text-pink-400 text-xs font-cyber tracking-widest uppercase">
+                SYSTEM HALTED // SISTEM TERHENTI
+            </div>
+            <h2 class="font-cyber text-3xl sm:text-4xl font-black text-white neon-glow-pink mb-6">GAME OVER / TAMAT</h2>
+
+            <div class="grid grid-cols-3 gap-2.5 mb-8">
+                <div class="bg-slate-800/80 p-3 rounded-2xl border border-purple-500/30">
+                    <div class="text-[10px] uppercase font-cyber text-slate-400 mb-1">Score / Mata</div>
+                    <div id="gameover-score" class="font-cyber font-bold text-base sm:text-lg text-purple-300">0</div>
+                </div>
+                <div class="bg-slate-800/80 p-3 rounded-2xl border border-cyan-500/30">
+                    <div class="text-[10px] uppercase font-cyber text-slate-400 mb-1">Distance / Jarak</div>
+                    <div id="gameover-distance" class="font-cyber font-bold text-base sm:text-lg text-cyan-300">0 m</div>
+                </div>
+                <div class="bg-slate-800/80 p-3 rounded-2xl border border-amber-500/30">
+                    <div class="text-[10px] uppercase font-cyber text-slate-400 mb-1">Coins / Syiling</div>
+                    <div id="gameover-coins" class="font-cyber font-bold text-base sm:text-lg text-amber-300">0</div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button id="btn-restart" class="w-full py-4 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white font-cyber font-bold text-base sm:text-lg rounded-2xl shadow-[0_0_20px_rgba(255,0,127,0.4)] transition cursor-pointer">
+                    PLAY AGAIN / MULA SEMULA
+                </button>
+                <button id="btn-mainmenu" class="w-full py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-cyber font-bold text-base sm:text-lg rounded-2xl transition cursor-pointer">
+                    MAIN MENU / MENU UTAMA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN GAME LOGIC SCRIPT -->
+    <script>
+        const LANES = [-3, 0, 3];
+        let gameState = 'MENU';
+        let scorePoints = 0;
+        let scoreCoins = 0;
+        let distanceTravelled = 0;
+        let gameSpeed = 0.6;
+        let baseGameSpeed = 0.6;
+        let maxGameSpeed = 1.25;
+        let difficultyLevel = 'normal';
+        let obstacleSpawnChance = 0.045;
+        let quizIntervalDistance = 500;
+        let currentLane = 1;
+        let targetX = 0;
+
+        let playerY = 0;
+        let verticalVelocity = 0;
+        let isJumping = false;
+        let isSliding = false;
+        let slideTimer = 0;
+        const gravity = -0.04;
+        const jumpForce = 0.8;
+
+        let hasShield = false;
+        let hasMagnet = false;
+        let immunityTimer = 0;
+        let isQuizActive = false;
+        let quizTriggerReason = 'COLLISION';
+        let lastQuizIndex = -1;
+        let nextQuizDistance = 500;
+
+        let scene, camera, renderer;
+        let playerGroup, shieldBubbleMesh, robotNpcGroup;
+        let worldTracks = [];
+        let worldObstacles = [];
+        let worldCoins = [];
+        let worldScenery = [];
+
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled || !audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                let now = audioCtx.currentTime;
+
+                if (type === 'coin') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.15);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'jump') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.exponentialRampToValueAtTime(450, now + 0.2);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } else if (type === 'crash') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(160, now);
+                    osc.frequency.linearRampToValueAtTime(45, now + 0.35);
+                    gain.gain.setValueAtTime(0.35, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'success') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.1);
+                    osc.frequency.setValueAtTime(783.99, now + 0.2);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (type === 'quiz') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.setValueAtTime(800, now + 0.1);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'start' || type === 'levelup') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(type === 'start' ? 330 : 520, now);
+                    osc.frequency.exponentialRampToValueAtTime(type === 'start' ? 880 : 1320, now + 0.28);
+                    gain.gain.setValueAtTime(0.16, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'warning') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(740, now);
+                    osc.frequency.setValueAtTime(520, now + 0.12);
+                    gain.gain.setValueAtTime(0.09, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.24);
+                    osc.start(now);
+                    osc.stop(now + 0.24);
+                }
+            } catch(e) {}
+        }
+
+        const quizBank = [
+            {
+                en: "What should you do when you receive a suspicious link?",
+                bm: "Apakah yang perlu anda lakukan apabila menerima pautan (link) yang mencurigakan?",
+                options: [
+                    { en: "Click immediately", bm: "Klik dengan segera" },
+                    { en: "Share it with friends", bm: "Kongsi dengan rakan-rakan" },
+                    { en: "Avoid clicking and report it", bm: "Elakkan daripada mengklik dan laporkannya" },
+                    { en: "Enter your password", bm: "Masukkan kata laluan anda" }
+                ],
+                correct: 2,
+                expEn: "Suspicious links often lead to phishing sites or malware downloads. Never click them and report immediately.",
+                expBm: "Pautan mencurigakan sering membawa ke laman phishing atau perisian hasad. Jangan klik dan laporkan segera."
+            },
+            {
+                en: "What should you do if someone asks for your OTP (One-Time Password)?",
+                bm: "Apakah yang perlu anda lakukan jika seseorang meminta kod OTP anda?",
+                options: [
+                    { en: "Share it", bm: "Kongsikannya" },
+                    { en: "Ignore the security risk", bm: "Abaikan risiko keselamatan" },
+                    { en: "Never share your OTP", bm: "Jangan sekali-kali berkongsi OTP anda" },
+                    { en: "Post it online", bm: "Muat naik secara dalam talian" }
+                ],
+                correct: 2,
+                expEn: "Your OTP protects your bank and personal accounts. Legitimate staff will never ask for your OTP.",
+                expBm: "Kod OTP melindungi akaun bank dan peribadi anda. Pihak rasmi tidak akan pernah meminta nombor OTP anda."
+            },
+            {
+                en: "Which password is the strongest?",
+                bm: "Kata laluan manakah yang paling kuat dan selamat?",
+                options: [
+                    { en: "123456", bm: "123456" },
+                    { en: "password", bm: "password" },
+                    { en: "qwerty", bm: "qwerty" },
+                    { en: "A unique, long password with different characters", bm: "Kata laluan panjang yang unik dengan pelbagai aksara" }
+                ],
+                correct: 3,
+                expEn: "Long passwords combining uppercase, lowercase, numbers, and symbols are hardest for hackers to crack.",
+                expBm: "Kata laluan panjang dengan gabungan huruf besar, huruf kecil, nombor dan simbol paling sukar digodam."
+            },
+            {
+                en: "What should you do when you encounter cyberbullying?",
+                bm: "Apakah tindakan terbaik apabila anda berdepan dengan buli siber?",
+                options: [
+                    { en: "Bully the person back", bm: "Membalas buli kepada orang tersebut" },
+                    { en: "Save evidence and report it to a trusted adult or platform", bm: "Simpan bukti dan laporkan kepada orang dewasa dipercayai atau platform" },
+                    { en: "Share the incident publicly", bm: "Sebarkan insiden tersebut secara umum" },
+                    { en: "Ignore all safety concerns", bm: "Abaikan semua kebimbangan keselamatan" }
+                ],
+                correct: 1,
+                expEn: "Taking screenshots as evidence and reporting to parents, teachers, or platform moderators stops cyberbullying safely.",
+                expBm: "Menyimpan tangkapan skrin sebagai bukti dan melaporkannya kepada ibu bapa, guru atau pihak platform membantu menghentikan buli siber."
+            },
+            {
+                en: "What is a 'Phishing' attack?",
+                bm: "Apakah yang dimaksudkan dengan serangan 'Phishing' (Pancingan Data)?",
+                options: [
+                    { en: "An online fishing video game", bm: "Permainan video memancing atas talian" },
+                    { en: "Fake emails or messages pretending to be trusted organizations to steal data", bm: "Emel atau mesej palsu yang menyamar sebagai organisasi sah untuk mencuri data" },
+                    { en: "Cleaning computer hardware dust", bm: "Membersihkan habuk perkakasan komputer" },
+                    { en: "Upgrading internet speed", bm: "Menaik taraf kelajuan internet" }
+                ],
+                correct: 1,
+                expEn: "Phishing tricks victims into revealing passwords or credit card numbers on fake websites.",
+                expBm: "Phishing memperdaya mangsa supaya mendedahkan kata laluan atau nombor kad bank di laman web palsu."
+            },
+            {
+                en: "Why is Two-Factor Authentication (2FA) important?",
+                bm: "Mengapakah Pengesahan Dua Faktor (2FA) sangat penting?",
+                options: [
+                    { en: "It doubles your computer screen size", bm: "Ia menggandakan saiz skrin komputer anda" },
+                    { en: "It adds an extra security layer beyond just a password", bm: "Ia menambah lapisan keselamatan tambahan selain kata laluan" },
+                    { en: "It makes battery last forever", bm: "Ia membuatkan bateri tahan selamanya" },
+                    { en: "It deletes all your photos", bm: "Ia memadam semua gambar anda" }
+                ],
+                correct: 1,
+                expEn: "Even if a hacker steals your password, 2FA blocks them without the second verification code.",
+                expBm: "Walaupun penggodam mencuri kata laluan anda, 2FA menghalang akses tanpa kod pengesahan kedua."
+            },
+            {
+                en: "What does HTTPS in a website address indicate?",
+                bm: "Apakah yang ditunjukkan oleh HTTPS pada alamat laman sesawang?",
+                options: [
+                    { en: "The website only plays 3D games", bm: "Laman web hanya memainkan permainan 3D" },
+                    { en: "Data sent between your browser and the site is encrypted", bm: "Data yang dihantar antara pelayar dan laman web disulitkan (encrypted)" },
+                    { en: "The website is completely free of ads", bm: "Laman web bebas daripada iklan" },
+                    { en: "Your computer will never overheat", bm: "Komputer anda tidak akan panas" }
+                ],
+                correct: 1,
+                expEn: "HTTPS encrypts your connection, protecting sensitive data from eavesdroppers.",
+                expBm: "HTTPS menyulitkan sambungan anda bagi melindungi data sensitif daripada dipintas pihak ketiga."
+            },
+            {
+                en: "What is 'Ransomware'?",
+                bm: "Apakah itu 'Ransomware'?",
+                options: [
+                    { en: "Free movie streaming software", bm: "Perisian penstriman filem percuma" },
+                    { en: "Malware that locks or encrypts your files and demands payment", bm: "Perisian hasad yang mengunci fail anda dan menuntut wang tebusan" },
+                    { en: "A tool to test Wi-Fi speed", bm: "Alat untuk menguji kelajuan Wi-Fi" },
+                    { en: "A racing video game", bm: "Permainan video perlumbaan" }
+                ],
+                correct: 1,
+                expEn: "Ransomware locks victims out of their files. Regular offline backups protect you from losing data.",
+                expBm: "Ransomware mengunci fail mangsa. Salinan sandaran (backup) berkala melindungi data anda."
+            },
+            {
+                en: "Is it safe to do online banking on unsecured public Wi-Fi?",
+                bm: "Adakah selamat melakukan perbankan dalam talian menggunakan Wi-Fi awam tanpa kata laluan?",
+                options: [
+                    { en: "Yes, always completely safe", bm: "Ya, sentiasa selamat sepenuhnya" },
+                    { en: "No, attackers on the same network can intercept your data", bm: "Tidak, penyerang di rangkaian sama boleh memintas data anda" },
+                    { en: "Safe if you type very fast", bm: "Selamat jika anda menaip dengan pantas" },
+                    { en: "Safe only at night", bm: "Selamat hanya pada waktu malam" }
+                ],
+                correct: 1,
+                expEn: "Unsecured public Wi-Fi lacks encryption. Use mobile data or a trusted VPN for sensitive transactions.",
+                expBm: "Wi-Fi awam terbuka tidak disulitkan. Gunakan data mudah alih atau VPN yang dipercayai untuk urusan sensitif."
+            },
+            {
+                en: "Why should you install software and OS updates regularly?",
+                bm: "Mengapakah anda perlu memasang kemas kini perisian (software updates) secara berkala?",
+                options: [
+                    { en: "To fill up hard drive space", bm: "Untuk memenuhkan ruang storan" },
+                    { en: "To patch newly discovered security vulnerabilities", bm: "Untuk menambal kelemahan keselamatan baharu yang ditemui" },
+                    { en: "To change your wallpaper color", bm: "Untuk menukar warna latar belakang skrin" },
+                    { en: "To slow down your phone", bm: "Untuk memperlahankan telefon anda" }
+                ],
+                correct: 1,
+                expEn: "Software updates fix security holes that cybercriminals use to infect devices.",
+                expBm: "Kemas kini menutup kelemahan keselamatan yang sering digunakan penjenayah siber untuk menyerang peranti."
+            },
+            {
+                en: "What is 'Juice Jacking' at public charging stations?",
+                bm: "Apakah risiko 'Juice Jacking' di stesen pengecas USB awam?",
+                options: [
+                    { en: "Spilling juice on your phone", bm: "Menumpahkan jus pada telefon anda" },
+                    { en: "Stealing data or installing malware through compromised USB ports", bm: "Kecurian data atau pemasangan malware melalui port USB awam yang diubah suai" },
+                    { en: "Charging your battery too fast", bm: "Mengecas bateri terlalu pantas" },
+                    { en: "Making your screen brighter", bm: "Menjadikan skrin lebih cerah" }
+                ],
+                correct: 1,
+                expEn: "USB cables carry both power and data. Use your own wall adapter or a USB data blocker in public.",
+                expBm: "Kabel USB membawa kuasa dan data. Gunakan penyesuai dinding (wall adapter) sendiri di tempat awam."
+            },
+            {
+                en: "What should you do before selling or giving away an old smartphone?",
+                bm: "Apakah yang mesti dilakukan sebelum menjual atau memberikan telefon pintar lama?",
+                options: [
+                    { en: "Hand it over immediately", bm: "Serahkan terus tanpa buat apa-apa" },
+                    { en: "Back up your data and perform a full Factory Reset", bm: "Buat salinan sandaran dan lakukan Tetapan Semula Kilang (Factory Reset)" },
+                    { en: "Just delete the camera app", bm: "Hanya padam aplikasi kamera" },
+                    { en: "Lower the screen brightness", bm: "Kurangkan kecerahan skrin" }
+                ],
+                correct: 1,
+                expEn: "A factory reset wipes personal accounts, photos, and passwords so strangers cannot recover them.",
+                expBm: "Tetapan semula kilang memadam akaun peribadi, gambar dan kata laluan supaya tidak dapat diakses orang lain."
+            }
+        ];
+
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x050515);
+            scene.fog = new THREE.FogExp2(0x050515, 0.015);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 4, 8);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0x00f3ff, 1.2);
+            dirLight.position.set(10, 20, 10);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+
+            const pinkLight = new THREE.PointLight(0xff007f, 2, 50);
+            pinkLight.position.set(-10, 5, -20);
+            scene.add(pinkLight);
+
+            const cyanLight = new THREE.PointLight(0x00f3ff, 2, 50);
+            cyanLight.position.set(10, 5, -40);
+            scene.add(cyanLight);
+
+            createPlayerAvatar();
+            createRobotNPC();
+            generateInitialWorld();
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function createPlayerAvatar() {
+            playerGroup = new THREE.Group();
+
+            const bodyGeo = new THREE.BoxGeometry(0.8, 1.1, 0.5);
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x00f3ff, emissive: 0x004455, roughness: 0.3 });
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.position.y = 1.1;
+            body.castShadow = true;
+            playerGroup.add(body);
+
+            const headGeo = new THREE.BoxGeometry(0.6, 0.6, 0.6);
+            const headMat = new THREE.MeshStandardMaterial({ color: 0x111122, roughness: 0.2 });
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 1.9;
+            head.castShadow = true;
+            playerGroup.add(head);
+
+            const visorGeo = new THREE.BoxGeometry(0.5, 0.2, 0.2);
+            const visorMat = new THREE.MeshStandardMaterial({ color: 0xff007f, emissive: 0xff007f });
+            const visor = new THREE.Mesh(visorGeo, visorMat);
+            visor.position.set(0, 1.95, -0.25);
+            playerGroup.add(visor);
+
+            const packGeo = new THREE.BoxGeometry(0.6, 0.8, 0.3);
+            const packMat = new THREE.MeshStandardMaterial({ color: 0x222244 });
+            const pack = new THREE.Mesh(packGeo, packMat);
+            pack.position.set(0, 1.1, 0.35);
+            playerGroup.add(pack);
+
+            const legGeo = new THREE.BoxGeometry(0.3, 0.9, 0.3);
+            const legMat = new THREE.MeshStandardMaterial({ color: 0x111122 });
+            
+            const leftLeg = new THREE.Mesh(legGeo, legMat);
+            leftLeg.position.set(-0.2, 0.45, 0);
+            leftLeg.name = "leftLeg";
+            playerGroup.add(leftLeg);
+
+            const rightLeg = new THREE.Mesh(legGeo, legMat);
+            rightLeg.position.set(0.2, 0.45, 0);
+            rightLeg.name = "rightLeg";
+            playerGroup.add(rightLeg);
+
+            const shieldGeo = new THREE.SphereGeometry(1.5, 24, 24);
+            const shieldMat = new THREE.MeshStandardMaterial({
+                color: 0x00f3ff,
+                emissive: 0x00aaff,
+                emissiveIntensity: 0.4,
+                transparent: true,
+                opacity: 0.28,
+                wireframe: false
+            });
+            shieldBubbleMesh = new THREE.Mesh(shieldGeo, shieldMat);
+            shieldBubbleMesh.position.y = 1.2;
+            shieldBubbleMesh.visible = false;
+            playerGroup.add(shieldBubbleMesh);
+
+            playerGroup.position.set(0, 0, 0);
+            scene.add(playerGroup);
+        }
+
+        function createRobotNPC() {
+            robotNpcGroup = new THREE.Group();
+
+            const torsoGeo = new THREE.CylinderGeometry(0.55, 0.35, 1.0, 16);
+            const torsoMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x222244, metalness: 0.6, roughness: 0.2 });
+            const torso = new THREE.Mesh(torsoGeo, torsoMat);
+            torso.position.y = 1.3;
+            robotNpcGroup.add(torso);
+
+            const coreGeo = new THREE.SphereGeometry(0.22, 16, 16);
+            const coreMat = new THREE.MeshStandardMaterial({ color: 0x00f3ff, emissive: 0x00f3ff, emissiveIntensity: 1.5 });
+            const core = new THREE.Mesh(coreGeo, coreMat);
+            core.position.set(0, 1.35, 0.45);
+            robotNpcGroup.add(core);
+
+            const headGeo = new THREE.BoxGeometry(0.75, 0.55, 0.6);
+            const headMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.5, roughness: 0.2 });
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 2.15;
+            robotNpcGroup.add(head);
+
+            const eyeGeo = new THREE.SphereGeometry(0.11, 12, 12);
+            const eyeMat = new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x10b981, emissiveIntensity: 1.5 });
+            const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+            leftEye.position.set(-0.18, 2.15, 0.31);
+            robotNpcGroup.add(leftEye);
+
+            const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+            rightEye.position.set(0.18, 2.15, 0.31);
+            robotNpcGroup.add(rightEye);
+
+            const antGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.35, 8);
+            const antMat = new THREE.MeshStandardMaterial({ color: 0xff007f, emissive: 0xff007f });
+            const ant = new THREE.Mesh(antGeo, antMat);
+            ant.position.set(0, 2.55, 0);
+            robotNpcGroup.add(ant);
+
+            robotNpcGroup.visible = false;
+            scene.add(robotNpcGroup);
+        }
+
+        function generateInitialWorld() {
+            for (let z = 0; z > -300; z -= 15) {
+                spawnEnvironmentChunk(z);
+            }
+        }
+
+        function spawnEnvironmentChunk(zPos) {
+            const trackGeo = new THREE.BoxGeometry(11, 0.2, 15);
+            const trackMat = new THREE.MeshStandardMaterial({ color: 0x0c0c24, roughness: 0.5 });
+            const track = new THREE.Mesh(trackGeo, trackMat);
+            track.position.set(0, -0.1, zPos);
+            track.receiveShadow = true;
+            scene.add(track);
+            worldTracks.push(track);
+
+            for (let l of LANES) {
+                const railGeo = new THREE.BoxGeometry(0.15, 0.1, 15);
+                const railMat = new THREE.MeshStandardMaterial({ color: 0x00f3ff, emissive: 0x00aaff });
+                const rail = new THREE.Mesh(railGeo, railMat);
+                rail.position.set(l - 0.8, 0.05, zPos);
+                scene.add(rail);
+                worldTracks.push(rail);
+
+                const rail2 = rail.clone();
+                rail2.position.set(l + 0.8, 0.05, zPos);
+                scene.add(rail2);
+                worldTracks.push(rail2);
+            }
+
+            if (Math.abs(zPos) > 30) {
+                createBuilding(-12, zPos);
+                createBuilding(12, zPos);
+            }
+
+            if (zPos < -25 && zPos > -250) {
+                spawnObstaclesAndCoins(zPos);
+            }
+        }
+
+        function createBuilding(x, z) {
+            const width = 6 + Math.random() * 4;
+            const height = 20 + Math.random() * 30;
+            const depth = 8 + Math.random() * 4;
+            const bGeo = new THREE.BoxGeometry(width, height, depth);
+            const bMat = new THREE.MeshStandardMaterial({ color: 0x08081a, roughness: 0.3 });
+            const building = new THREE.Mesh(bGeo, bMat);
+            building.position.set(x, height / 2 - 2, z);
+            scene.add(building);
+            worldScenery.push(building);
+
+            const stripGeo = new THREE.BoxGeometry(width + 0.1, 0.2, depth + 0.1);
+            const stripMat = new THREE.MeshStandardMaterial({ color: Math.random() > 0.5 ? 0x00f3ff : 0xff007f, emissive: 0xff007f });
+            for (let y = 5; y < height - 2; y += 4) {
+                const strip = new THREE.Mesh(stripGeo, stripMat);
+                strip.position.set(x, y - height/2, z);
+                scene.add(strip);
+                worldScenery.push(strip);
+            }
+        }
+
+        function spawnObstaclesAndCoins(z) {
+            const laneIndex = Math.floor(Math.random() * 3);
+            const xPos = LANES[laneIndex];
+            const randType = Math.random();
+
+            if (randType < 0.38) {
+                const isMoving = Math.random() < 0.45;
+                const trainGeo = new THREE.BoxGeometry(2.4, 2.5, 6);
+                const trainMat = new THREE.MeshStandardMaterial({ color: isMoving ? 0x2a0845 : 0x1a1a3a, roughness: 0.2 });
+                const train = new THREE.Mesh(trainGeo, trainMat);
+                train.position.set(xPos, 1.25, z);
+                train.castShadow = true;
+                scene.add(train);
+
+                const neonGeo = new THREE.BoxGeometry(2.5, 0.2, 5.8);
+                const neonMat = new THREE.MeshStandardMaterial({ color: isMoving ? 0x00f3ff : 0xff007f, emissive: isMoving ? 0x00f3ff : 0xff007f });
+                const neon = new THREE.Mesh(neonGeo, neonMat);
+                neon.position.set(xPos, 2.3, z);
+                scene.add(neon);
+
+                worldObstacles.push({
+                    mesh: train,
+                    decor: neon,
+                    type: 'train',
+                    x: xPos,
+                    z: z,
+                    extraSpeed: isMoving ? 0.22 : 0
+                });
+
+            } else if (randType < 0.68) {
+                const barGeo = new THREE.BoxGeometry(2.2, 0.8, 0.6);
+                const barMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0xff4400 });
+                const barrier = new THREE.Mesh(barGeo, barMat);
+                barrier.position.set(xPos, 0.4, z);
+                barrier.castShadow = true;
+                scene.add(barrier);
+
+                worldObstacles.push({ mesh: barrier, type: 'barrier', x: xPos, z: z, extraSpeed: 0 });
+
+            } else if (randType < 0.88) {
+                const postGeo = new THREE.BoxGeometry(0.3, 3, 0.3);
+                const postMat = new THREE.MeshStandardMaterial({ color: 0x00f3ff, emissive: 0x00aaff });
+                
+                const leftPost = new THREE.Mesh(postGeo, postMat);
+                leftPost.position.set(xPos - 1.1, 1.5, z);
+                scene.add(leftPost);
+
+                const rightPost = new THREE.Mesh(postGeo, postMat);
+                rightPost.position.set(xPos + 1.1, 1.5, z);
+                scene.add(rightPost);
+
+                const laserGeo = new THREE.BoxGeometry(2.4, 0.25, 0.25);
+                const laserMat = new THREE.MeshStandardMaterial({ color: 0xff007f, emissive: 0xff007f });
+                const laser = new THREE.Mesh(laserGeo, laserMat);
+                laser.position.set(xPos, 1.9, z);
+                scene.add(laser);
+
+                worldObstacles.push({
+                    mesh: laser,
+                    posts: [leftPost, rightPost],
+                    type: 'laser',
+                    x: xPos,
+                    z: z,
+                    extraSpeed: 0
+                });
+            }
+
+            for (let i = 0; i < 4; i++) {
+                const coinGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.1, 16);
+                const coinMat = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffaa00, metalness: 0.8, roughness: 0.2 });
+                const coin = new THREE.Mesh(coinGeo, coinMat);
+                coin.rotation.z = Math.PI / 2;
+                coin.position.set(xPos, 1.0, z - (i * 2) - 8);
+                scene.add(coin);
+                worldCoins.push({ mesh: coin, x: xPos, z: z - (i * 2) - 8, collected: false });
+            }
+
+            if (Math.random() < 0.25) {
+                const badgeGeo = new THREE.OctahedronGeometry(0.5);
+                const badgeMat = new THREE.MeshStandardMaterial({ color: 0xff00ff, emissive: 0xff00ff, roughness: 0.1 });
+                const badge = new THREE.Mesh(badgeGeo, badgeMat);
+                badge.position.set(LANES[Math.floor(Math.random() * 3)], 1.5, z - 15);
+                scene.add(badge);
+                worldCoins.push({ mesh: badge, x: badge.position.x, z: badge.position.z, collected: false, isBadge: true });
+            }
+        }
+
+        function removeObstacle(index) {
+            const obs = worldObstacles[index];
+            if (!obs) return;
+            scene.remove(obs.mesh);
+            if (obs.decor) scene.remove(obs.decor);
+            if (obs.posts) obs.posts.forEach(p => scene.remove(p));
+            worldObstacles.splice(index, 1);
+        }
+
+        function clearNearbyObstacles(safeRadius = 38) {
+            for (let i = worldObstacles.length - 1; i >= 0; i--) {
+                if (worldObstacles[i].mesh.position.z > -safeRadius) {
+                    removeObstacle(i);
+                }
+            }
+        }
+
+        function initControls() {
+            window.addEventListener('keydown', (e) => {
+                if (gameState !== 'PLAYING' || isQuizActive) return;
+
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                    if (currentLane > 0) {
+                        currentLane--;
+                        targetX = LANES[currentLane];
+                        playSound('jump');
+                    }
+                } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                    if (currentLane < 2) {
+                        currentLane++;
+                        targetX = LANES[currentLane];
+                        playSound('jump');
+                    }
+                } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') {
+                    if (!isJumping && !isSliding) {
+                        verticalVelocity = jumpForce;
+                        isJumping = true;
+                        playSound('jump');
+                    }
+                } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+                    if (!isJumping && !isSliding) {
+                        isSliding = true;
+                        slideTimer = 35;
+                        playSound('jump');
+                    }
+                }
+            });
+
+            document.getElementById('touch-left').addEventListener('click', () => {
+                if (gameState === 'PLAYING' && !isQuizActive && currentLane > 0) {
+                    currentLane--;
+                    targetX = LANES[currentLane];
+                    playSound('jump');
+                }
+            });
+            document.getElementById('touch-right').addEventListener('click', () => {
+                if (gameState === 'PLAYING' && !isQuizActive && currentLane < 2) {
+                    currentLane++;
+                    targetX = LANES[currentLane];
+                    playSound('jump');
+                }
+            });
+            document.getElementById('touch-jump').addEventListener('click', () => {
+                if (gameState === 'PLAYING' && !isQuizActive && !isJumping && !isSliding) {
+                    verticalVelocity = jumpForce;
+                    isJumping = true;
+                    playSound('jump');
+                }
+            });
+            document.getElementById('touch-slide').addEventListener('click', () => {
+                if (gameState === 'PLAYING' && !isQuizActive && !isJumping && !isSliding) {
+                    isSliding = true;
+                    slideTimer = 35;
+                    playSound('jump');
+                }
+            });
+
+            let touchStartX = 0;
+            let touchStartY = 0;
+            window.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, {passive: true});
+
+            window.addEventListener('touchend', (e) => {
+                if (gameState !== 'PLAYING' || isQuizActive) return;
+                let touchEndX = e.changedTouches[0].screenX;
+                let touchEndY = e.changedTouches[0].screenY;
+                let diffX = touchEndX - touchStartX;
+                let diffY = touchEndY - touchStartY;
+
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    if (diffX > 40 && currentLane < 2) {
+                        currentLane++;
+                        targetX = LANES[currentLane];
+                        playSound('jump');
+                    } else if (diffX < -40 && currentLane > 0) {
+                        currentLane--;
+                        targetX = LANES[currentLane];
+                        playSound('jump');
+                    }
+                } else {
+                    if (diffY < -40 && !isJumping && !isSliding) {
+                        verticalVelocity = jumpForce;
+                        isJumping = true;
+                        playSound('jump');
+                    } else if (diffY > 40 && !isJumping && !isSliding) {
+                        isSliding = true;
+                        slideTimer = 35;
+                        playSound('jump');
+                    }
+                }
+            }, {passive: true});
+
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    applyDifficulty(btn.dataset.level);
+                    initAudio();
+                    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                    playSound('quiz');
+                });
+            });
+            applyDifficulty('normal');
+            document.getElementById('btn-start').addEventListener('click', startGame);
+            document.getElementById('btn-restart').addEventListener('click', startGame);
+            document.getElementById('btn-restart-paused').addEventListener('click', () => {
+                document.getElementById('modal-pause').classList.add('hidden');
+                startGame();
+            });
+            document.getElementById('btn-resume').addEventListener('click', () => {
+                document.getElementById('modal-pause').classList.add('hidden');
+                gameState = 'PLAYING';
+            });
+            document.getElementById('btn-pause').addEventListener('click', () => {
+                if (gameState === 'PLAYING' && !isQuizActive) {
+                    gameState = 'PAUSED';
+                    document.getElementById('modal-pause').classList.remove('hidden');
+                }
+            });
+            document.getElementById('btn-quit-paused').addEventListener('click', () => {
+                document.getElementById('modal-pause').classList.add('hidden');
+                returnToMenu();
+            });
+            document.getElementById('btn-mainmenu').addEventListener('click', returnToMenu);
+
+            document.getElementById('btn-instructions-open').addEventListener('click', () => {
+                document.getElementById('modal-instructions').classList.remove('hidden');
+            });
+            document.getElementById('btn-instructions-close').addEventListener('click', () => {
+                document.getElementById('modal-instructions').classList.add('hidden');
+            });
+            document.getElementById('btn-instructions-gotit').addEventListener('click', () => {
+                document.getElementById('modal-instructions').classList.add('hidden');
+            });
+
+            document.getElementById('btn-audio').addEventListener('click', () => {
+                initAudio();
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                soundEnabled = !soundEnabled;
+                const icon = document.getElementById('btn-audio').querySelector('i');
+                if (soundEnabled) {
+                    icon.className = "fa-solid fa-volume-high text-base";
+                } else {
+                    icon.className = "fa-solid fa-volume-xmark text-base";
+                }
+            });
+        }
+
+        function applyDifficulty(level) {
+            difficultyLevel = level;
+            const settings = {
+                easy:   { base: 0.48, max: 0.95, spawn: 0.032, quiz: 700, label: "ROOKIE: lebih banyak ruang untuk belajar dan berlatih." },
+                normal: { base: 0.66, max: 1.42, spawn: 0.055, quiz: 450, label: "PRO: kelajuan meningkat, halangan lebih kerap dan kuiz bonus lebih pantas." },
+                hard:   { base: 0.82, max: 1.85, spawn: 0.075, quiz: 320, label: "LEGEND: sangat pantas, halangan kerap dan kuiz bonus lebih mencabar." }
+            };
+            const chosen = settings[level] || settings.normal;
+            baseGameSpeed = chosen.base;
+            maxGameSpeed = chosen.max;
+            obstacleSpawnChance = chosen.spawn;
+            quizIntervalDistance = chosen.quiz;
+            document.getElementById('difficulty-description').textContent = chosen.label;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                const active = btn.dataset.level === level;
+                btn.classList.toggle('ring-2', active);
+                btn.classList.toggle('ring-cyan-300/50', active);
+                btn.classList.toggle('bg-cyan-500/25', active);
+                btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+        }
+
+        function startGame() {
+            initAudio();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            applyDifficulty(difficultyLevel);
+            playSound('start');
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('modal-gameover').classList.add('hidden');
+            document.getElementById('modal-quiz').classList.add('hidden');
+            document.getElementById('game-hud').classList.remove('hidden');
+
+            scorePoints = 0;
+            scoreCoins = 0;
+            distanceTravelled = 0;
+            gameSpeed = baseGameSpeed;
+            currentLane = 1;
+            targetX = LANES[currentLane];
+            playerGroup.position.set(0, 0, 0);
+            playerGroup.scale.set(1, 1, 1);
+            playerGroup.visible = true;
+            playerY = 0;
+            verticalVelocity = 0;
+            isJumping = false;
+            isSliding = false;
+            hasShield = false;
+            immunityTimer = 0;
+            isQuizActive = false;
+            nextQuizDistance = quizIntervalDistance;
+            robotNpcGroup.visible = false;
+
+            while (worldObstacles.length > 0) {
+                removeObstacle(0);
+            }
+            worldCoins.forEach(coin => scene.remove(coin.mesh));
+            worldCoins = [];
+
+            generateInitialWorld();
+            updateHUD();
+            gameState = 'PLAYING';
+        }
+
+        function returnToMenu() {
+            isQuizActive = false;
+            robotNpcGroup.visible = false;
+            document.getElementById('game-hud').classList.add('hidden');
+            document.getElementById('modal-pause').classList.add('hidden');
+            document.getElementById('modal-gameover').classList.add('hidden');
+            document.getElementById('modal-quiz').classList.add('hidden');
+            document.getElementById('main-menu').classList.remove('hidden');
+            gameState = 'MENU';
+        }
+
+        function triggerGameOver() {
+            isQuizActive = false;
+            robotNpcGroup.visible = false;
+            gameState = 'GAMEOVER';
+            document.getElementById('modal-quiz').classList.add('hidden');
+            document.getElementById('gameover-score').innerText = Math.floor(scorePoints);
+            document.getElementById('gameover-distance').innerText = Math.floor(distanceTravelled) + ' m';
+            document.getElementById('gameover-coins').innerText = scoreCoins;
+            document.getElementById('modal-gameover').classList.remove('hidden');
+        }
+
+        function updateHUD() {
+            document.getElementById('hud-score').innerText = Math.floor(scorePoints);
+            document.getElementById('hud-coins').innerText = scoreCoins;
+            document.getElementById('hud-distance').innerText = Math.floor(distanceTravelled) + ' m';
+
+            const shieldBadge = document.getElementById('hud-shield-badge');
+            if (hasShield) {
+                shieldBadge.classList.remove('hidden');
+                shieldBadge.classList.add('flex');
+                shieldBubbleMesh.visible = true;
+            } else {
+                shieldBadge.classList.add('hidden');
+                shieldBadge.classList.remove('flex');
+                shieldBubbleMesh.visible = false;
+            }
+
+            const immunityBadge = document.getElementById('hud-immunity-badge');
+            if (immunityTimer > 0) {
+                immunityBadge.classList.remove('hidden');
+                immunityBadge.classList.add('flex');
+                document.getElementById('hud-immunity-timer').innerText = (immunityTimer / 60).toFixed(1) + 's';
+            } else {
+                immunityBadge.classList.add('hidden');
+                immunityBadge.classList.remove('flex');
+            }
+        }
+
+        function triggerCyberQuiz(reason = 'COLLISION') {
+            if (isQuizActive) return;
+            isQuizActive = true;
+            quizTriggerReason = reason;
+            gameState = 'QUIZ';
+
+            if (reason === 'COLLISION') {
+                playSound('crash');
+            } else {
+                playSound('quiz');
+                nextQuizDistance += quizIntervalDistance;
+            }
+
+            robotNpcGroup.position.set(playerGroup.position.x, 0.3, playerGroup.position.z - 2.6);
+            robotNpcGroup.visible = true;
+
+            loadNewQuizQuestion(reason === 'COLLISION');
+            document.getElementById('modal-quiz').classList.remove('hidden');
+        }
+
+        function loadNewQuizQuestion(isCrashIntro = false) {
+            const quizCard = document.getElementById('quiz-card');
+            quizCard.classList.remove('neon-box-green');
+            quizCard.classList.add('neon-box-pink');
+
+            const robotSpeech = document.getElementById('quiz-robot-speech');
+            if (isCrashIntro) {
+                robotSpeech.innerHTML = `<span class="text-pink-300 font-bold block mb-1">"OH NO! You have crashed into an obstacle! Before you can continue your adventure, you must complete a Cybersecurity Challenge!"</span><span class="text-cyan-200 block">"ALAMAK! Anda telah melanggar halangan! Sebelum menyambung pengembaraan, anda mesti menyelesaikan Cabaran Keselamatan Siber!"</span>`;
+            } else {
+                robotSpeech.innerHTML = `<span class="text-cyan-300 font-bold block mb-1">"CYBER CHALLENGE! Answer correctly to earn +100 Bonus Score & a Cyber Shield!"</span><span class="text-slate-300 block">"CABARAN SIBER! Jawab dengan betul untuk +100 Mata Bonus & Perisai Siber!"</span>`;
+            }
+
+            let idx = Math.floor(Math.random() * quizBank.length);
+            if (quizBank.length > 1 && idx === lastQuizIndex) {
+                idx = (idx + 1) % quizBank.length;
+            }
+            lastQuizIndex = idx;
+            const quiz = quizBank[idx];
+
+            document.getElementById('quiz-question-en').innerText = quiz.en;
+            document.getElementById('quiz-question-bm').innerText = quiz.bm;
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            const feedbackEl = document.getElementById('quiz-feedback');
+            feedbackEl.classList.add('hidden');
+            document.getElementById('quiz-continue-btn').classList.add('hidden');
+            document.getElementById('quiz-retry-btn').classList.add('hidden');
+            document.getElementById('quiz-giveup-btn').classList.add('hidden');
+
+            const letters = ['A', 'B', 'C', 'D'];
+            quiz.options.forEach((opt, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-3 text-left bg-slate-800/90 hover:bg-slate-700 rounded-xl border border-pink-500/30 text-slate-100 transition cursor-pointer flex items-start space-x-3";
+                btn.innerHTML = `
+                    <span class="w-7 h-7 rounded-lg bg-pink-500/20 border border-pink-400/50 text-pink-300 font-cyber font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">${letters[optIdx]}</span>
+                    <div class="text-xs sm:text-sm">
+                        <div class="font-bold text-white">${opt.en}</div>
+                        <div class="text-cyan-300 text-[11px] sm:text-xs">${opt.bm}</div>
+                    </div>
+                `;
+                btn.onclick = () => handleQuizAnswer(optIdx, quiz);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleQuizAnswer(selectedIdx, quiz) {
+            const optionsContainer = document.getElementById('quiz-options');
+            const buttons = optionsContainer.getElementsByTagName('button');
+            const feedbackEl = document.getElementById('quiz-feedback');
+            const letters = ['A', 'B', 'C', 'D'];
+
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+                buttons[i].classList.remove('hover:bg-slate-700', 'cursor-pointer');
+                if (i === quiz.correct) {
+                    buttons[i].classList.remove('bg-slate-800/90', 'border-pink-500/30');
+                    buttons[i].classList.add('bg-emerald-600/90', 'border-emerald-300', 'text-white', 'shadow-[0_0_15px_rgba(16,185,129,0.5)]');
+                } else if (i === selectedIdx && selectedIdx !== quiz.correct) {
+                    buttons[i].classList.remove('bg-slate-800/90', 'border-pink-500/30');
+                    buttons[i].classList.add('bg-rose-600/90', 'border-rose-300', 'text-white');
+                } else {
+                    buttons[i].classList.add('opacity-50');
+                }
+            }
+
+            feedbackEl.classList.remove('hidden');
+
+            if (selectedIdx === quiz.correct) {
+                playSound('success');
+                const quizCard = document.getElementById('quiz-card');
+                quizCard.classList.remove('neon-box-pink');
+                quizCard.classList.add('neon-box-green');
+
+                document.getElementById('quiz-robot-speech').innerHTML = `
+                    <span class="text-emerald-300 font-bold block mb-1">"Excellent! You have passed the Cybersecurity Challenge!"</span>
+                    <span class="text-cyan-200 block">"Syabas! Anda telah melepasi Cabaran Keselamatan Siber!"</span>
+                `;
+
+                scorePoints += 100;
+                hasShield = true;
+                updateHUD();
+
+                feedbackEl.className = "p-3.5 rounded-2xl mb-4 text-xs sm:text-sm bg-emerald-500/20 border border-emerald-400/50 text-emerald-200";
+                feedbackEl.innerHTML = `
+                    <div class="font-bold text-emerald-300 mb-1">
+                        <i class="fa-solid fa-circle-check mr-1"></i> +100 BONUS POINTS & +1 CYBER SHIELD AWARDED! / +100 MATA & +1 PERISAI SIBER!
+                    </div>
+                    <div class="text-white text-xs">${quiz.expEn}</div>
+                    <div class="text-cyan-200 text-xs mt-0.5">${quiz.expBm}</div>
+                `;
+
+                const continueBtn = document.getElementById('quiz-continue-btn');
+                continueBtn.classList.remove('hidden');
+                continueBtn.onclick = resumeFromQuizRescue;
+            } else {
+                playSound('crash');
+                const correctOpt = quiz.options[quiz.correct];
+                feedbackEl.className = "p-3.5 rounded-2xl mb-4 text-xs sm:text-sm bg-rose-500/20 border border-rose-400/50 text-rose-200";
+                feedbackEl.innerHTML = `
+                    <div class="font-bold text-rose-300 mb-1">
+                        <i class="fa-solid fa-circle-xmark mr-1"></i> Incorrect! Correct Answer / Jawapan Betul: ${letters[quiz.correct]} (${correctOpt.en} / ${correctOpt.bm})
+                    </div>
+                    <div class="text-white text-xs">${quiz.expEn}</div>
+                    <div class="text-cyan-200 text-xs mt-0.5">${quiz.expBm}</div>
+                `;
+
+                const retryBtn = document.getElementById('quiz-retry-btn');
+                retryBtn.classList.remove('hidden');
+                retryBtn.onclick = () => {
+                    loadNewQuizQuestion(false);
+                };
+
+                const giveUpBtn = document.getElementById('quiz-giveup-btn');
+                giveUpBtn.classList.remove('hidden');
+                giveUpBtn.onclick = triggerGameOver;
+            }
+        }
+
+        function resumeFromQuizRescue() {
+            clearNearbyObstacles(42);
+
+            playerY = 0;
+            verticalVelocity = 0;
+            isJumping = false;
+            isSliding = false;
+            slideTimer = 0;
+            playerGroup.scale.set(1, 1, 1);
+            playerGroup.position.y = 0;
+            playerGroup.position.x = LANES[currentLane];
+            targetX = LANES[currentLane];
+
+            immunityTimer = 180;
+            hasShield = true;
+
+            robotNpcGroup.visible = false;
+            document.getElementById('modal-quiz').classList.add('hidden');
+
+            isQuizActive = false;
+            gameState = 'PLAYING';
+            updateHUD();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (gameState === 'QUIZ' && robotNpcGroup.visible) {
+                robotNpcGroup.position.y = 0.4 + Math.sin(Date.now() * 0.005) * 0.15;
+                robotNpcGroup.rotation.y = Math.sin(Date.now() * 0.003) * 0.25;
+            }
+
+            if (gameState === 'PLAYING' && !isQuizActive) {
+                const distDelta = gameSpeed * 1.5;
+                distanceTravelled += distDelta;
+                scorePoints += distDelta * 0.5;
+
+                if (gameSpeed < maxGameSpeed) {
+                    gameSpeed += difficultyLevel === 'hard' ? 0.00016 : (difficultyLevel === 'normal' ? 0.00011 : 0.00006);
+                }
+
+                if (distanceTravelled >= nextQuizDistance) {
+                    triggerCyberQuiz('BONUS');
+                    renderer.render(scene, camera);
+                    return;
+                }
+
+                if (immunityTimer > 0) {
+                    immunityTimer--;
+                    playerGroup.visible = Math.floor(immunityTimer / 5) % 2 === 0;
+                    if (immunityTimer <= 0) {
+                        playerGroup.visible = true;
+                    }
+                } else {
+                    playerGroup.visible = true;
+                }
+
+                playerGroup.position.x += (targetX - playerGroup.position.x) * 0.2;
+
+                if (isJumping) {
+                    playerY += verticalVelocity;
+                    verticalVelocity += gravity;
+                    if (playerY <= 0) {
+                        playerY = 0;
+                        isJumping = false;
+                        verticalVelocity = 0;
+                    }
+                }
+
+                if (isSliding) {
+                    slideTimer--;
+                    playerGroup.scale.set(1, 0.5, 1);
+                    if (slideTimer <= 0) {
+                        isSliding = false;
+                        playerGroup.scale.set(1, 1, 1);
+                    }
+                }
+                playerGroup.position.y = playerY;
+
+                const leftLeg = playerGroup.getObjectByName("leftLeg");
+                const rightLeg = playerGroup.getObjectByName("rightLeg");
+                if (leftLeg && rightLeg && !isJumping) {
+                    const runCycle = Date.now() * 0.02;
+                    leftLeg.position.z = Math.sin(runCycle) * 0.3;
+                    rightLeg.position.z = -Math.sin(runCycle) * 0.3;
+                }
+
+                if (shieldBubbleMesh.visible) {
+                    shieldBubbleMesh.rotation.y += 0.03;
+                }
+
+                const moveDelta = gameSpeed;
+
+                worldTracks.forEach(track => {
+                    track.position.z += moveDelta;
+                    if (track.position.z > 15) track.position.z -= 315;
+                });
+
+                worldScenery.forEach(scenery => {
+                    scenery.position.z += moveDelta;
+                    if (scenery.position.z > 20) scenery.position.z -= 320;
+                });
+
+                for (let i = worldObstacles.length - 1; i >= 0; i--) {
+                    let obs = worldObstacles[i];
+                    const obsMove = moveDelta + (obs.extraSpeed || 0);
+                    obs.mesh.position.z += obsMove;
+                    if (obs.decor) obs.decor.position.z += obsMove;
+                    if (obs.posts) obs.posts.forEach(p => p.position.z += obsMove);
+
+                    const zThreshold = obs.type === 'train' ? 3.2 : 0.9;
+                    if (Math.abs(obs.mesh.position.z - playerGroup.position.z) < zThreshold &&
+                        Math.abs(obs.x - playerGroup.position.x) < 0.95) {
+                        
+                        let collisionDetected = false;
+                        if (obs.type === 'train') {
+                            if (playerY < 1.8) collisionDetected = true;
+                        } else if (obs.type === 'barrier') {
+                            if (playerY < 0.8) collisionDetected = true;
+                        } else if (obs.type === 'laser') {
+                            if (!isSliding && playerY < 1.8) collisionDetected = true;
+                        }
+
+                        if (collisionDetected) {
+                            if (immunityTimer > 0) {
+                                removeObstacle(i);
+                                continue;
+                            } else if (hasShield) {
+                                hasShield = false;
+                                immunityTimer = 45;
+                                removeObstacle(i);
+                                playSound('jump');
+                                updateHUD();
+                                continue;
+                            } else {
+                                removeObstacle(i);
+                                triggerCyberQuiz('COLLISION');
+                                break;
+                            }
+                        }
+                    }
+
+                    if (obs.mesh.position.z > 18) {
+                        removeObstacle(i);
+                    }
+                }
+
+                for (let i = worldCoins.length - 1; i >= 0; i--) {
+                    let coin = worldCoins[i];
+                    coin.mesh.position.z += moveDelta;
+                    coin.mesh.rotation.y += 0.05;
+
+                    if (hasMagnet && Math.abs(coin.mesh.position.z - playerGroup.position.z) < 10) {
+                        coin.mesh.position.x += (playerGroup.position.x - coin.mesh.position.x) * 0.1;
+                    }
+
+                    if (!coin.collected &&
+                        Math.abs(coin.mesh.position.z - playerGroup.position.z) < 1.2 &&
+                        Math.abs(coin.mesh.position.x - playerGroup.position.x) < 1.2 &&
+                        Math.abs(coin.mesh.position.y - playerGroup.position.y) < 1.5) {
+                        
+                        coin.collected = true;
+                        scene.remove(coin.mesh);
+                        worldCoins.splice(i, 1);
+
+                        if (coin.isBadge) {
+                            triggerCyberQuiz('BONUS');
+                            break;
+                        } else {
+                            scoreCoins += 1;
+                            scorePoints += 10;
+                            playSound('coin');
+                        }
+                    } else if (coin.mesh.position.z > 15) {
+                        scene.remove(coin.mesh);
+                        worldCoins.splice(i, 1);
+                    }
+                }
+
+                if (Math.random() < obstacleSpawnChance) {
+                    spawnObstaclesAndCoins(-250);
+                }
+
+                camera.position.x += (playerGroup.position.x * 0.4 - camera.position.x) * 0.1;
+                camera.lookAt(playerGroup.position.x * 0.3, playerGroup.position.y + 1, playerGroup.position.z - 4);
+
+                updateHUD();
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.onload = function() {
+            initThreeJS();
+            initControls();
+            animate();
+        };
+    </script>
+</body>
+</html>
